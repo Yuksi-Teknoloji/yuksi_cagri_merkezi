@@ -188,6 +188,15 @@ export const NAV: Record<Role, RawNavGroup[]> = {
       ],
     },
   ],
+
+  support: [
+    {
+      title: "Destek",
+      items: [
+        { label: "Ana", path: "support" },
+      ],
+    },
+  ],
 };
 
 /** Sidebar için href’e çevir: path -> `/${path}`  */
