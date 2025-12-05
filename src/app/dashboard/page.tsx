@@ -1,4 +1,4 @@
-// src/app/(dashboards)/admin/page.tsx
+// src/app/dashboard/page.tsx
 "use client";
 import { redirect } from "next/navigation";
 import { getAuthToken } from "@/src/utils/auth";

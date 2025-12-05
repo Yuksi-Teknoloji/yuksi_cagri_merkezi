@@ -1,32 +1,11 @@
-// src/app/dashboards/[role]/admin/layout.tsx
-import DashboardShell from "@/src/components/dashboard/Shell";
-import Header from "@/src/components/dashboard/Header";
-import Sidebar from "@/src/components/dashboard/Sidebar";
-import { navForRole } from "@/src/app/config/nav";
+// src/app/dashboard/layout.tsx
 import "@/src/styles/soft-ui.css";
+import SupportDashboardLayout from "@/src/components/support/SupportDashboardLayout";
 
-export default async function AdminLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const nav = navForRole("support");
-
-  return (
-    <div className="min-h-dvh bg-neutral-100 flex">
-      <Sidebar nav={nav} />
-      <div className="flex-1 orange-ui">
-        <Header
-          title="Yüksi Panel"
-          headerClass="bg-orange-500 border-orange-400 text-white"
-          titleClass="font-extrabold"
-        />
-        <main className="px-4 py-6">
-          <div className="max-w-7xl mx-auto">
-            <DashboardShell>{children}</DashboardShell>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+  return <SupportDashboardLayout>{children}</SupportDashboardLayout>;
 }

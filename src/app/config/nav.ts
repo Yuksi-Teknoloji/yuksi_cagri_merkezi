@@ -3,7 +3,11 @@ import type { Role } from "@/src/types/roles";
 import type { NavGroup as SidebarNavGroup } from "@/src/types/roles";
 
 // path tabanlı tanım
-export type RawNavItem = { label: string; path: string };
+export type RawNavItem = { 
+  label: string; 
+  path: string 
+  requiredAccess?: number[];
+};
 export type RawNavGroup = { title: string; items: RawNavItem[] };
 
 // Proje dosya yapına göre path’ler:
@@ -193,7 +197,70 @@ export const NAV: Record<Role, RawNavGroup[]> = {
     {
       title: "Destek",
       items: [
-        { label: "Ana", path: "support" },
+        { label: "Ana", path: "support", requiredAccess: [] },
+      ],
+    },
+    {
+      title: "Kurye İşlemleri",
+      items: [
+        { label: "Kurye Listesi", path: "supports/couriers/courier-list", requiredAccess: [1] },
+        { label: "Kurye Paketleri", path: "supports/couriers/courier-packages", requiredAccess: [1] },
+        { label: "Kurye Konumları", path: "supports/couriers/courier-location", requiredAccess: [1] },
+        { label: "Kurye İstatistikleri", path: "supports/couriers/courier-stats", requiredAccess: [1] },
+      ],
+    },
+    {
+      title: "Bayi İşlemleri",
+      items: [
+        { label: "Bayi Listesi", path: "supports/dealers/dealer-list", requiredAccess: [2] },
+        { label: "Bayi Paketleri", path: "supports/dealers/dealer-packages", requiredAccess: [2] },
+        { label: "Bayi Konumları", path: "supports/dealers/dealer-location", requiredAccess: [2] },
+        { label: "Bayi İstatistikleri", path: "supports/dealers/dealer-stats", requiredAccess: [2] },
+      ],
+    },
+    {
+      title: "Restoran İşlemleri",
+      items: [
+        { label: "Restoran Listesi", path: "supports/restaurants/restaurant-list", requiredAccess: [3] },
+        { label: "Restoran Paketleri", path: "supports/restaurants/restaurant-packages", requiredAccess: [3] },
+        { label: "Restoran Konumları", path: "supports/restaurants/restaurant-location", requiredAccess: [3] },
+        { label: "Restoran İstatistikleri", path: "supports/restaurants/restaurant-stats", requiredAccess: [3] },
+      ],
+    },
+     {
+      title: "Ödeme İşlemleri",
+      items: [
+        { label: "Ödeme Listesi", path: "supports/payments/payment-list", requiredAccess: [4] },
+        { label: "Ödeme Paketleri", path: "supports/payments/payment-packages", requiredAccess: [4] },
+        { label: "Ödeme Konumları", path: "supports/payments/payment-location", requiredAccess: [4] },
+        { label: "Ödeme İstatistikleri", path: "supports/payments/payment-stats", requiredAccess: [4] },
+      ],
+    },
+     {
+      title: "Lojistik İşlemleri",
+      items: [
+        { label: "Lojistik Listesi", path: "supports/logistics/logistics-list", requiredAccess: [5] },
+        { label: "Lojistik Paketleri", path: "supports/logistics/logistics-packages", requiredAccess: [5] },
+        { label: "Lojistik Konumları", path: "supports/logistics/logistics-location", requiredAccess: [5] },
+        { label: "Lojistik İstatistikleri", path: "supports/logistics/logistics-stats", requiredAccess: [5] },
+      ],
+    },
+     {
+      title: "Sipariş İşlemleri",
+      items: [
+        { label: "Sipariş Listesi", path: "supports/orders/order-list", requiredAccess: [6] },
+        { label: "Sipariş Paketleri", path: "supports/orders/order-packages", requiredAccess: [6] },
+        { label: "Sipariş Konumları", path: "supports/orders/order-location", requiredAccess: [6] },
+        { label: "Sipariş İstatistikleri", path: "supports/orders/order-stats", requiredAccess: [6] },
+      ],
+    },
+     {
+      title: "Ticarim",
+      items: [
+        { label: "Ticarim Listesi", path: "supports/commercials/commercial-list", requiredAccess: [7] },
+        { label: "Ticarim Paketleri", path: "supports/commercials/commercial-packages", requiredAccess: [7] },
+        { label: "Ticarim Konumları", path: "supports/commercials/commercial-location", requiredAccess: [7] },
+        { label: "Ticarim İstatistikleri", path: "supports/commercials/commercial-stats", requiredAccess: [7] },
       ],
     },
   ],
@@ -210,7 +277,8 @@ export function navForRole(role: Role): SidebarNavGroup[] | undefined {
       label: it.label,
       // Sidebar zaten `/dashboards/${role}${href}` yapıyor.
       // Bu yüzden href burada `/admin/...` veya `/restaurants/...` şeklinde olmalı.
-      href: "/" + it.path.replace(/^\/+/, ""),
+       href: "/dashboard/" + it.path.replace(/^\/+/, ""),
+      requiredAccess: it.requiredAccess,
     })),
   }));
 }
