@@ -369,9 +369,9 @@ export default function CourierStatsPage() {
     const pkgActivityHours = pkgRaw?.activityHours ?? null;
 
     const percentUsed = React.useMemo(() => {
-        if (pkgMax == null || pkgDelivered == null) return 0;
-        return pct(Number(pkgDelivered), Number(pkgMax));
-    }, [pkgMax, pkgDelivered]);
+        if (pkgMax == null || pkgActivityDays == null) return 0;
+        return pct(Number(pkgActivityDays), Number(pkgMax));
+    }, [pkgMax, pkgActivityDays]);
 
     const isOnBreakValue =
         stats?.status?.isOnBreak ?? (stats as any)?.isOnBreak ?? null;
@@ -717,7 +717,7 @@ export default function CourierStatsPage() {
                                         </div>
 
                                         {/* progress bar */}
-                                        {pkgMax != null && pkgDelivered != null && (
+                                        {pkgMax != null && pkgActivityDays != null && (
                                             <div>
                                                 <div className="mb-1 flex items-center justify-between text-sm">
                                                     <span className="text-neutral-600">Kullanım</span>
@@ -732,7 +732,7 @@ export default function CourierStatsPage() {
                                                     />
                                                 </div>
                                                 <div className="mt-1 text-xs text-neutral-500">
-                                                    {pkgDelivered ?? 0} / {pkgMax ?? 0} teslimat kullanıldı
+                                                    {pkgActivityDays ?? 0} / {pkgMax ?? 0} gün kullanıldı
                                                     {pkgHasLeft === false && (
                                                         <span className="ml-2 rounded-md bg-rose-50 px-2 py-0.5 font-semibold text-rose-600 ring-1 ring-rose-100">
                                                             Paket hakkı bitmiş
