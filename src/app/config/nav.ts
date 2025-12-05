@@ -197,14 +197,13 @@ export const NAV: Record<Role, RawNavGroup[]> = {
     {
       title: "Destek",
       items: [
-        { label: "Ana", path: "support", requiredAccess: [] },
+        { label: "Ana", path: "", requiredAccess: [] },
       ],
     },
     {
       title: "Kurye İşlemleri",
       items: [
         { label: "Kurye Listesi", path: "supports/couriers/courier-list", requiredAccess: [1] },
-        { label: "Kurye Paketleri", path: "supports/couriers/courier-packages", requiredAccess: [1] },
         { label: "Kurye Konumları", path: "supports/couriers/courier-location", requiredAccess: [1] },
         { label: "Kurye İstatistikleri", path: "supports/couriers/courier-stats", requiredAccess: [1] },
       ],

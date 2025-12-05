@@ -1,17 +1,17 @@
-//src/app/dashboard/supports/couriers/courier-list/page.tsx
 'use client';
+
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
-const CourierList = dynamic(
-  () => import('./CourierList'),
+const CourierLocationClient = dynamic(
+  () => import('./CourierLocationClient'),
   { ssr: false }
 );
 
-export default function CourierListPage() {
+export default function CourierLocationPage() {
   return (
     <Suspense fallback={<div>Yükleniyor...</div>}>
-      <CourierList />
+      <CourierLocationClient />
     </Suspense>
   );
 }
