@@ -3,13 +3,17 @@
 import { redirect } from "next/navigation";
 import { getAuthToken } from "@/src/utils/auth";
 import { decodeJwt, isExpired, roleSegment } from "@/src/utils/jwt";
+import { useEffect, useState } from "react";
 
 export default function SupportPage() {
-  
-  const token = getAuthToken();
+  const [token, setToken] = useState<string | null>(null);
 
-  if (!token) {
-    redirect("/");
+  useEffect(() => {
+    setToken(getAuthToken());
+  }, []);
+
+  if (token === null) {
+    return null;
   }
 
   const claims = decodeJwt(token);
@@ -24,5 +28,9 @@ export default function SupportPage() {
     redirect("/");
   }
 
-  return <div className="rounded-2xl bg-white p-4 shadow">Çağrı Merkezi Paneline Hoşgeldiniz</div>;
+  return (
+    <div className="rounded-2xl bg-white p-4 shadow">
+      Çağrı Merkezi Paneline Hoşgeldiniz
+    </div>
+  );
 }

@@ -6,8 +6,8 @@ import {
   MapContainer,
   TileLayer,
   CircleMarker,
-  PolyLine,
-  ToolTip,
+  Polyline,
+  Tooltip,
   useMap,
 } from "react-leaflet";
 import { getAuthToken } from "@/src/utils/auth";
