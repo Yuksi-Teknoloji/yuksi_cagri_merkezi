@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getAuthToken } from "@/src/utils/auth";
 import { decodeJwt, isExpired, roleSegment } from "@/src/utils/jwt";
 
-export default function AdminHome() {
+export default function SupportPage() {
   
   const token = getAuthToken();
 
