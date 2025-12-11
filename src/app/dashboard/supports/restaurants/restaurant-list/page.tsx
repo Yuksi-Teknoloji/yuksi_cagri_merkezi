@@ -235,6 +235,7 @@ export default function RestaurantList() {
         headers: { "Content-Type": "application/json", ...headers },
         body: JSON.stringify(body),
       });
+      const j: any = await readJson(res);
       if (!res.ok) throw new Error(pickMsg(j, `HTTP ${res.status}`));
       ok("Yük güncellendi.");
       setEditOpen(false);
@@ -486,7 +487,7 @@ export default function RestaurantList() {
                   Vergi Numarası
                 </label>
                 <input
-                  value={editing.taxNumber}
+                  value={editing.taxNumber ?? ""}
                   onChange={(e) =>
                     setEditing({
                       ...editing,
