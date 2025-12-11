@@ -12,6 +12,11 @@ import {
 } from "react-leaflet";
 import { getAuthToken } from "@/src/utils/auth";
 import { useSupportAccess } from "@/src/hooks/useSupportAccess";
+import dynamic from "next/dynamic";
+
+const MapPicker = dynamic(() => import("@/src/components/map/MapPicker"), {
+  ssr: false,
+});
 
 function bearerHeaders(token?: string | null): HeadersInit {
   const h: HeadersInit = { Accept: "application/json" };
@@ -48,6 +53,8 @@ type Restaurant = {
   contactPerson?: string | null;
   taxNumber?: string | null;
   fullAddress?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   openingHour?: string | null;
@@ -77,8 +84,6 @@ type RestaurantListResponse = {
   data?: Restaurant[];
 };
 
-type LatLngApi = { latitude: number; longitude: number };
-
 export default function RestaurantList() {
   const token = React.useMemo(() => getAuthToken(), []);
   const headers = React.useMemo<HeadersInit>(
@@ -91,11 +96,24 @@ export default function RestaurantList() {
 
   const [rows, setRows] = React.useState<Restaurant[]>([]);
   const [loading, setLoading] = React.useState(false);
+  const [okMsg, setOkMsg] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const ok = (m: string) => {
+    setOkMsg(m);
+    setTimeout(() => setOkMsg(null), 3500);
+  };
+  const err = (m: string) => {
+    setErrMsg(m);
+    setTimeout(() => setErrMsg(null), 4500);
+  };
 
   const [limit, setLimit] = React.useState<number | "">("");
   const [offset, setOffset] = React.useState<number>(0);
   const [search, setSearch] = React.useState("");
+
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [editBusy, setEditBusy] = React.useState(false);
+  const [editing, setEditing] = React.useState<Restaurant | null>(null);
 
   const [info, setInfo] = React.useState<string | null>(null);
   function toast(msg: string) {
@@ -145,6 +163,8 @@ export default function RestaurantList() {
         contactPerson: x.contactPerson ?? null,
         taxNumber: x.taxNumber ?? null,
         fullAddress: x.fullAddress ?? null,
+        addressLine1: x.addressLine1 ?? null,
+        addressLine2: x.addressLine2 ?? null,
         latitude: x.latitude ?? null,
         longitude: x.longitude ?? null,
         openingHour: x.openingHour ?? null,
@@ -186,6 +206,45 @@ export default function RestaurantList() {
     if (!hasRestaurantAccess) return;
     load();
   }, [load, hasRestaurantAccess]);
+
+  const showEdit = async (row: Restaurant) => {
+    setEditing({ ...row });
+    setEditOpen(true);
+  };
+
+  const saveEdit = async () => {
+    if (!editing) return;
+    setEditBusy(true);
+    try {
+      const id = editing.id;
+      const body = {
+        email: editing.email,
+        phone: editing.phone,
+        name: editing.name,
+        contact_person: editing.contactPerson,
+        tax_number: editing.taxNumber,
+        address_line1: editing.addressLine1,
+        address_line2: editing.addressLine2,
+        opening_hour: editing.openingHour,
+        closing_hour: editing.closingHour,
+        latitude: editing.latitude,
+        longitude: editing.longitude,
+      };
+      const res = await fetch(`/yuksi/support/restaurants/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", ...headers },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(pickMsg(j, `HTTP ${res.status}`));
+      ok("Yük güncellendi.");
+      setEditOpen(false);
+      await load();
+    } catch (e: any) {
+      err(e?.message || "Güncelleme başarısız.");
+    } finally {
+      setEditBusy(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -247,10 +306,20 @@ export default function RestaurantList() {
           </div>
         </div>
 
-        {error && (
-          <div className="px-4 pt-3 pb-2 text-sm text-rose-600">{error}</div>
+        {(okMsg || error) && (
+          <div className="space-y-2">
+            {okMsg && (
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {okMsg}
+              </div>
+            )}
+            {error && (
+              <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {error}
+              </div>
+            )}
+          </div>
         )}
-
         <div className="overflow-x-auto">
           <div className="min-w-full border-t border-neutral-200/70">
             <div className="hidden md:grid md:grid-cols-6 text-sm text-neutral-500 border-b text-center">
@@ -285,7 +354,7 @@ export default function RestaurantList() {
                       #{r.id}
                     </div>
                   </div>
-                  <div className="px-3 py-3 text-center md:text-left">
+                  <div className="px-3 py-3 text-sm text-center md:text-left truncate">
                     <div className="md:hidden text-[11px] text-neutral-500">
                       İletişim
                     </div>
@@ -318,32 +387,219 @@ export default function RestaurantList() {
                     </div>
                   </div>
                   <div className="px-3 py-3 text-center">
-                      <div className="md:hidden text-[11px] text-neutral-500 mb-1">
-                        İşlemler
-                      </div>
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          className="rounded-lg bg-sky-500 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-sky-600"
-                        >
-                          Detay
-                        </button>
-                        <button
-                          className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-amber-600"
-                        >
-                          Düzenle
-                        </button>
-                        <button
-                          className="rounded-lg bg-rose-500 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-rose-600"
-                        >
-                          Sil
-                        </button>
-                      </div>
+                    <div className="md:hidden text-[11px] text-neutral-500 mb-1">
+                      İşlemler
                     </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <button className="rounded-lg bg-sky-500 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-sky-600">
+                        Detay
+                      </button>
+                      <button
+                        onClick={() => showEdit(r)}
+                        className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-amber-600"
+                      >
+                        Düzenle
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))}
           </div>
         </div>
       </section>
+
+      {editOpen && editing && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white p-5 shadow-xl">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="text-lg font-semibold">
+                Restoran Düzenle <br />{" "}
+                <span className="text-sm">
+                  (Sistemsel sorun anında müdahale için.)
+                </span>
+              </div>
+              <button
+                onClick={() => setEditOpen(false)}
+                className="rounded-full p-2 hover:bg-neutral-100"
+                aria-label="Kapat"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="max-h-[75vh] overflow-auto grid gap-4 p-1 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  E-Posta
+                </label>
+                <input
+                  value={editing.email ?? ""}
+                  onChange={(e) =>
+                    setEditing({ ...editing, email: e.target.value })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Telefon
+                </label>
+                <input
+                  type="phone"
+                  value={editing.phone ?? ""}
+                  onChange={(e) =>
+                    setEditing({ ...editing, phone: e.target.value })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Restoran Adı
+                </label>
+                <input
+                  value={editing.name ?? ""}
+                  onChange={(e) =>
+                    setEditing({ ...editing, name: e.target.value })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Yetkili Kişi
+                </label>
+                <input
+                  value={editing.contactPerson ?? ""}
+                  onChange={(e) =>
+                    setEditing({ ...editing, contactPerson: e.target.value })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="mb-1 block text-sm font-medium">
+                  Vergi Numarası
+                </label>
+                <input
+                  value={editing.taxNumber}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      taxNumber: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Adres Satırı 1
+                </label>
+                <input
+                  value={editing.addressLine1 ?? ""}
+                  onChange={(e) =>
+                    setEditing({ ...editing, addressLine1: e.target.value })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Adres Satırı 2
+                </label>
+                <input
+                  value={editing.addressLine2 ?? ""}
+                  onChange={(e) =>
+                    setEditing({ ...editing, addressLine2: e.target.value })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Açılış Saati
+                </label>
+                <input
+                  value={editing.openingHour ?? ""}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      openingHour: e.target.value,
+                    })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Kapanış Saati
+                </label>
+                <input
+                  value={editing.closingHour ?? ""}
+                  onChange={(e) =>
+                    setEditing({ ...editing, closingHour: e.target.value })
+                  }
+                  required
+                  className="w-full rounded-xl border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                />
+              </div>
+
+              <div>
+                <MapPicker
+                  value={
+                    editing.latitude && editing.longitude
+                      ? {
+                          lat: Number(editing.latitude),
+                          lng: Number(editing.longitude),
+                        }
+                      : null
+                  }
+                  onChange={(pos: any) => {
+                    setEditing({ 
+                    ...editing, latitude: pos.lat, longitude: pos.lng, addressLine1: pos.address
+                     })
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() => setEditOpen(false)}
+                className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm hover:bg-neutral-50"
+              >
+                İptal
+              </button>
+              <button
+                onClick={saveEdit}
+                disabled={editBusy}
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+              >
+                {editBusy ? "Kaydediliyor…" : "Kaydet"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {info && (
+        <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 shadow-lg">
+          {info}
+        </div>
+      )}
     </div>
   );
 }

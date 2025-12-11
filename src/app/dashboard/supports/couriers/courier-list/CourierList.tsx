@@ -98,7 +98,10 @@ type CourierPackageListResponse = {
 
 export default function CourierList() {
   const token = React.useMemo(() => getAuthToken(), []);
-  const headers = React.useMemo<HeadersInit>(() => bearerHeaders(token), [token]);
+  const headers = React.useMemo<HeadersInit>(
+    () => bearerHeaders(token),
+    [token]
+  );
 
   // access kontrolü (Modül 1: Kurye)
   const { access } = useSupportAccess();
@@ -296,8 +299,8 @@ export default function CourierList() {
       <div className="rounded-2xl bg-white p-6 shadow">
         <h1 className="text-xl font-semibold mb-2">Kurye Listesi</h1>
         <p className="text-sm text-rose-600">
-          Bu sayfayı görüntülemek için <strong>Kurye (Modül 1)</strong> yetkisine
-          sahip olmanız gerekiyor.
+          Bu sayfayı görüntülemek için <strong>Kurye (Modül 1)</strong>{" "}
+          yetkisine sahip olmanız gerekiyor.
         </p>
       </div>
     );
@@ -308,9 +311,12 @@ export default function CourierList() {
       {/* header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Kurye Listesi</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Kurye Listesi
+          </h1>
           <p className="text-sm text-neutral-600">
-            Çağrı merkezi için tüm kuryelerin listesini görüntüleyin (Modül 1 gerekli).
+            Çağrı merkezi için tüm kuryelerin listesini görüntüleyin (Modül 1
+            gerekli).
           </p>
         </div>
 
@@ -364,101 +370,108 @@ export default function CourierList() {
         )}
 
         <div className="overflow-x-auto">
-          <table className="min-w-full border-t border-neutral-200/70">
-            <thead>
-              <tr className="text-left text-sm text-neutral-500">
-                <th className="px-4 py-3 font-medium">Kurye</th>
-                <th className="px-4 py-3 font-medium">İletişim</th>
-                <th className="px-4 py-3 font-medium">Araç / Plaka</th>
-                <th className="px-4 py-3 font-medium">Konum</th>
-                <th className="px-4 py-3 font-medium">Durum</th>
-                <th className="px-4 py-3 font-medium">Oluşturma</th>
-                <th className="px-4 py-3 font-medium w-[140px]">Paketler</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading && (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-10 text-center text-sm text-neutral-500"
-                  >
-                    Yükleniyor…
-                  </td>
-                </tr>
-              )}
+          <div className="min-w-full border-t border-neutral-200/70">
+            <div className="hidden md:grid md:grid-cols-7 text-sm text-neutral-500 border-b text-center">
+              <div className="px-4 py-3 font-medium">Kurye</div>
+              <div className="px-4 py-3 font-medium">İletişim</div>
+              <div className="px-4 py-3 font-medium">Araç / Plaka</div>
+              <div className="px-4 py-3 font-medium">Konum</div>
+              <div className="px-4 py-3 font-medium">Durum</div>
+              <div className="px-4 py-3 font-medium">Oluşturma</div>
+              <div className="px-4 py-3 font-medium w-[140px]">Paketler</div>
+            </div>
+            {loading && (
+              <div className="px-6 py-10 text-center text-sm text-neutral-500">
+                Yükleniyor…
+              </div>
+            )}
 
-              {!loading &&
-                rows.map((c) => (
-                  <tr
-                    key={c.id}
-                    className="border-t border-neutral-200/70 align-top hover:bg-neutral-50"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="text-sm font-semibold text-neutral-900">
-                        {c.first_name} {c.last_name}
+            {!loading &&
+              rows.map((c) => (
+                <div
+                  key={c.id}
+                  className="border-b border-neutral-200/70 md:grid md:grid-cols-7 hover:bg-neutral-50 bg-[#FFF4EE]"
+                >
+                  <div className="px-4 py-3 text-center md:text-left">
+                    <div className="text-sm font-semibold text-neutral-900">
+                      <div className="md:hidden text-[11px] text-neutral-500">
+                        Kurye
                       </div>
-                      <div className="mt-1 text-[11px] text-neutral-400">
-                        #{c.id}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="text-neutral-800">
-                        {c.email || <span className="text-neutral-400">–</span>}
-                      </div>
-                      <div className="text-neutral-700">
-                        {c.phone || <span className="text-neutral-400">–</span>}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div>{c.vehicle_type || "-"}</div>
-                      <div className="text-neutral-600 text-xs">
-                        {c.plate || ""}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div>{c.city || "-"}</div>
-                      <div className="text-xs text-neutral-600 line-clamp-2">
-                        {c.address || ""}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      {c.is_active ? (
-                        <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                          Aktif
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-semibold text-rose-700 ring-1 ring-rose-100">
-                          Pasif
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      {fmtDate(c.created_at)}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <button
-                        onClick={() => loadPackages(c)}
-                        className="rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-orange-600"
-                      >
-                        Paketleri Gör
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      {c.first_name} {c.last_name}
+                    </div>
+                    <div className="mt-1 text-[11px] text-neutral-400">
+                      #{c.id}
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 text-sm truncate text-center md:text-left">
+                    <div className="md:hidden text-[11px] text-neutral-500">
+                      İletişim
+                    </div>
+                    <div className="text-neutral-800">
+                      {c.email || <span className="text-neutral-400">–</span>}
+                    </div>
+                    <div className="text-neutral-700">
+                      {c.phone || <span className="text-neutral-400">–</span>}
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 text-sm text-center md:text-left">
+                    <div className="md:hidden text-[11px] text-neutral-500">
+                      Araç / Plaka
+                    </div>
+                    <div>{c.vehicle_type || "-"}</div>
+                    <div className="text-neutral-600 text-xs">
+                      {c.plate || ""}
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 text-sm text-center md:text-left">
+                    <div className="md:hidden text-[11px] text-neutral-500">
+                      Konum
+                    </div>
+                    <div>{c.city || "-"}</div>
+                    <div className="text-xs text-neutral-600 line-clamp-2">
+                      {c.address || ""}
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 text-sm text-center md:text-left">
+                    <div className="md:hidden text-[11px] text-neutral-500">
+                      Durum
+                    </div>
+                    {c.is_active ? (
+                      <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                        Aktif
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-semibold text-rose-700 ring-1 ring-rose-100">
+                        Pasif
+                      </span>
+                    )}
+                  </div>
+                  <div className="px-4 py-3 text-sm text-center md:text-left">
+                    <div className="md:hidden text-[11px] text-neutral-500">
+                      Oluşturma
+                    </div>
+                    {fmtDate(c.created_at)}
+                  </div>
+                  <div className="px-4 py-3 text-sm text-center md:text-left">
+                    <div className="md:hidden text-[11px] text-neutral-500">
+                      Paketler
+                    </div>
+                    <button
+                      onClick={() => loadPackages(c)}
+                      className="rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-orange-600"
+                    >
+                      Paketleri Gör
+                    </button>
+                  </div>
+                </div>
+              ))}
 
-              {!loading && rows.length === 0 && !error && (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-12 text-center text-sm text-neutral-500"
-                  >
-                    Kayıt bulunamadı.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            {!loading && rows.length === 0 && !error && (
+              <div className="px-6 py-12 text-center text-sm text-neutral-500">
+                Kayıt bulunamadı.
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -628,7 +641,9 @@ function PackagesModal(props: {
                       </td>
                       <td className="px-4 py-2 align-top">
                         <div>{p.customer}</div>
-                        <div className="text-xs text-neutral-600">{p.phone}</div>
+                        <div className="text-xs text-neutral-600">
+                          {p.phone}
+                        </div>
                       </td>
                       <td className="px-4 py-2 align-top">
                         <div className="text-xs text-neutral-800 line-clamp-2">
@@ -740,17 +755,16 @@ function RouteMap({ start, end }: { start: MapLatLng; end: MapLatLng }) {
         if (!res.ok) throw new Error(`OSRM HTTP ${res.status}`);
         const j: any = await res.json();
         const coords: [number, number][] =
-          j?.routes?.[0]?.geometry?.coordinates?.map(
-            (c: [number, number]) => [c[1], c[0]]
-          ) ?? [];
+          j?.routes?.[0]?.geometry?.coordinates?.map((c: [number, number]) => [
+            c[1],
+            c[0],
+          ]) ?? [];
         if (!coords.length) throw new Error("Rota bulunamadı");
         if (!cancelled) setPoints(coords);
       } catch (e) {
         console.error("OSRM route error, straight line fallback:", e);
         if (!cancelled) {
-          setRouteError(
-            "Rota hesaplanamadı, kuş uçuşu çizgi gösteriliyor."
-          );
+          setRouteError("Rota hesaplanamadı, kuş uçuşu çizgi gösteriliyor.");
           setPoints([
             [start.lat, start.lng],
             [end.lat, end.lng],
@@ -772,7 +786,10 @@ function RouteMap({ start, end }: { start: MapLatLng; end: MapLatLng }) {
 
   const polyPositions = points.length
     ? (points as [number, number][])
-    : ([[start.lat, start.lng], [end.lat, end.lng]] as [number, number][]);
+    : ([
+        [start.lat, start.lng],
+        [end.lat, end.lng],
+      ] as [number, number][]);
 
   return (
     <>
@@ -812,7 +829,10 @@ function RouteMap({ start, end }: { start: MapLatLng; end: MapLatLng }) {
           </Tooltip>
         </CircleMarker>
 
-        <Polyline positions={polyPositions} pathOptions={{ weight: 4, opacity: 0.85 }} />
+        <Polyline
+          positions={polyPositions}
+          pathOptions={{ weight: 4, opacity: 0.85 }}
+        />
       </MapContainer>
     </>
   );
