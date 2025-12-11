@@ -103,8 +103,8 @@ export default function RestaurantList() {
     setTimeout(() => setOkMsg(null), 3500);
   };
   const err = (m: string) => {
-    setErrMsg(m);
-    setTimeout(() => setErrMsg(null), 4500);
+    setError(m);
+    setTimeout(() => setError(null), 4500);
   };
 
   const [limit, setLimit] = React.useState<number | "">("");
