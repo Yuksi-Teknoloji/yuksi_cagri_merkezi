@@ -2,14 +2,6 @@
 
 import * as React from "react";
 import "leaflet/dist/leaflet.css";
-import {
-  MapContainer,
-  TileLayer,
-  CircleMarker,
-  Polyline,
-  Tooltip,
-  useMap,
-} from "react-leaflet";
 import { getAuthToken } from "@/src/utils/auth";
 import { useSupportAccess } from "@/src/hooks/useSupportAccess";
 import dynamic from "next/dynamic";
@@ -78,6 +70,41 @@ type Restaurant = {
   } | null;
 };
 
+type RestaurantDetail = {
+  contactPerson?: string | null;
+  taxNumber?: string | null;
+  latitude?: string | null;
+  longitude?: string | null;
+  openingHour?: string | null;
+  closingHour?: string | null;
+  location?: {
+    cityId?: number | null;
+    cityName?: string | null;
+    stateId?: number | null;
+    stateName?: string | null;
+    countryId?: number | null;
+    countryName?: string | null;
+  } | null;
+  package?: {
+    package_info?: {
+      id?: string | null;
+      restaurant_id?: string | null;
+      unit_price?: number | null;
+      min_package?: number | null;
+      max_package?: number | null;
+      note?: string | null;
+      updated_at?: string | null;
+    } | null;
+    max_package?: number | null;
+    delivered_count?: number | null;
+    total_count?: number | null;
+    remaining_packages?: number | null;
+    has_package_left?: number | null;
+    warning_message?: string | null;
+  } | null;
+  courierCount?: number | null;
+};
+
 type RestaurantListResponse = {
   success?: boolean;
   message?: string;
@@ -114,6 +141,11 @@ export default function RestaurantList() {
   const [editOpen, setEditOpen] = React.useState(false);
   const [editBusy, setEditBusy] = React.useState(false);
   const [editing, setEditing] = React.useState<Restaurant | null>(null);
+
+  const [detailOpen, setDetailOpen] = React.useState(false);
+  const [detailRows, setDetailRows] = React.useState<RestaurantDetail | null>();
+  const [detailLoading, setDetailLoading] = React.useState(false);
+  const [detailErr, setDetailErr] = React.useState<string | null>(null);
 
   const [info, setInfo] = React.useState<string | null>(null);
   function toast(msg: string) {
@@ -210,6 +242,25 @@ export default function RestaurantList() {
   const showEdit = async (row: Restaurant) => {
     setEditing({ ...row });
     setEditOpen(true);
+  };
+
+  const showDetail = async (id: string) => {
+    setDetailLoading(true);
+    setDetailErr(null);
+    setDetailRows(null);
+    try {
+      const res = await fetch(`/yuksi/support/restaurants/${id}`, {
+        headers,
+        cache: "no-store",
+      });
+      const j: any = await readJson<RestaurantDetail>(res);
+      setDetailRows((j?.data ?? j) as RestaurantDetail);
+    } catch (e: any) {
+      setDetailErr(e?.message || "Detay getirilemedi.");
+    } finally {
+      setDetailLoading(false);
+      setDetailOpen(true);
+    }
   };
 
   const saveEdit = async () => {
@@ -392,7 +443,10 @@ export default function RestaurantList() {
                       İşlemler
                     </div>
                     <div className="flex items-center justify-center gap-2">
-                      <button className="rounded-lg bg-sky-500 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-sky-600">
+                      <button
+                        onClick={() => showDetail(r.id)}
+                        className="rounded-lg bg-sky-500 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-sky-600"
+                      >
                         Detay
                       </button>
                       <button
@@ -408,6 +462,83 @@ export default function RestaurantList() {
           </div>
         </div>
       </section>
+
+      {detailOpen && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white p-5 shadow-xl">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="text-lg font-semibold">
+                Restoran Detayları
+              </div>
+              <button
+                onClick={() => setDetailOpen(false)}
+                className="rounded-full p-2 hover:bg-neutral-100"
+                aria-label="Kapat"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="max-h-[75vh] overflow-auto grid gap-4 p-1 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Açılış Saati
+                </label>
+                <div>
+                  {detailRows?.openingHour}
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Kapanış Saati
+                </label>
+                <div>
+                  {detailRows?.closingHour}
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Yetkili Kişi
+                </label>
+                <div>
+                  {detailRows?.contactPerson}
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Vergi Numarası
+                </label>
+                <div>
+                  {detailRows?.taxNumber}
+                </div>
+              </div>
+              <div className="col-span-2">
+                <label className="mb-1 block font-bold">
+                  Paket Bilgileri
+                </label>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Kalan Paket
+                </label>
+                <div>
+                  {detailRows?.package?.remaining_packages}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Teslim Edilen Paket
+                </label>
+                <div>
+                  {detailRows?.package?.delivered_count}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editOpen && editing && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
@@ -558,7 +689,7 @@ export default function RestaurantList() {
                 />
               </div>
 
-              <div>
+              <div className="col-span-2">
                 <MapPicker
                   value={
                     editing.latitude && editing.longitude
@@ -569,9 +700,12 @@ export default function RestaurantList() {
                       : null
                   }
                   onChange={(pos: any) => {
-                    setEditing({ 
-                    ...editing, latitude: pos.lat, longitude: pos.lng, addressLine1: pos.address
-                     })
+                    setEditing({
+                      ...editing,
+                      latitude: pos.lat,
+                      longitude: pos.lng,
+                      addressLine1: pos.address,
+                    });
                   }}
                 />
               </div>
