@@ -144,7 +144,6 @@ export default function RestaurantList() {
 
   const [detailOpen, setDetailOpen] = React.useState(false);
   const [detailRows, setDetailRows] = React.useState<RestaurantDetail | null>();
-  const [detailLoading, setDetailLoading] = React.useState(false);
   const [detailErr, setDetailErr] = React.useState<string | null>(null);
 
   const [info, setInfo] = React.useState<string | null>(null);
@@ -245,7 +244,6 @@ export default function RestaurantList() {
   };
 
   const showDetail = async (id: string) => {
-    setDetailLoading(true);
     setDetailErr(null);
     setDetailRows(null);
     try {
@@ -258,7 +256,6 @@ export default function RestaurantList() {
     } catch (e: any) {
       setDetailErr(e?.message || "Detay getirilemedi.");
     } finally {
-      setDetailLoading(false);
       setDetailOpen(true);
     }
   };
@@ -467,9 +464,7 @@ export default function RestaurantList() {
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
           <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white p-5 shadow-xl">
             <div className="mb-3 flex items-center justify-between">
-              <div className="text-lg font-semibold">
-                Restoran Detayları
-              </div>
+              <div className="text-lg font-semibold">Restoran Detayları</div>
               <button
                 onClick={() => setDetailOpen(false)}
                 className="rounded-full p-2 hover:bg-neutral-100"
@@ -484,59 +479,51 @@ export default function RestaurantList() {
                 <label className="mb-1 block text-sm font-medium">
                   Açılış Saati
                 </label>
-                <div>
-                  {detailRows?.openingHour}
-                </div>
+                <div>{detailRows?.openingHour}</div>
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">
                   Kapanış Saati
                 </label>
-                <div>
-                  {detailRows?.closingHour}
-                </div>
+                <div>{detailRows?.closingHour}</div>
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">
                   Yetkili Kişi
                 </label>
-                <div>
-                  {detailRows?.contactPerson}
-                </div>
+                <div>{detailRows?.contactPerson}</div>
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">
                   Vergi Numarası
                 </label>
-                <div>
-                  {detailRows?.taxNumber}
-                </div>
+                <div>{detailRows?.taxNumber}</div>
               </div>
               <div className="col-span-2">
-                <label className="mb-1 block font-bold">
-                  Paket Bilgileri
-                </label>
+                <label className="mb-1 block font-bold">Paket Bilgileri</label>
               </div>
 
               <div>
                 <label className="mb-1 block text-sm font-medium">
                   Kalan Paket
                 </label>
-                <div>
-                  {detailRows?.package?.remaining_packages}
-                </div>
+                <div>{detailRows?.package?.remaining_packages}</div>
               </div>
 
               <div>
                 <label className="mb-1 block text-sm font-medium">
                   Teslim Edilen Paket
                 </label>
-                <div>
-                  {detailRows?.package?.delivered_count}
-                </div>
+                <div>{detailRows?.package?.delivered_count}</div>
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {detailErr && (
+        <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+          {detailErr}
         </div>
       )}
 
