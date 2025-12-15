@@ -1,27 +1,27 @@
 //src/app/dshboard/supports/couriers/courier-location/CourierLocationClient.tsx
-'use client';
+"use client";
 
-import * as React from 'react';
-import dynamic from 'next/dynamic';
-import { getAuthToken } from '@/src/utils/auth';
-import { useSupportAccess } from '@/src/hooks/useSupportAccess';
+import * as React from "react";
+import dynamic from "next/dynamic";
+import { getAuthToken } from "@/src/utils/auth";
+import { useSupportAccess } from "@/src/hooks/useSupportAccess";
+import { Maximize2, Minimize2 } from "lucide-react";
 
 // Leaflet map (SSR kapalı)
-const LiveLeaflet = dynamic(
-  () => import('@/src/components/map/LiveLeaflet'),
-  { ssr: false }
-);
+const LiveLeaflet = dynamic(() => import("@/src/components/map/LiveLeaflet"), {
+  ssr: false,
+});
 
 /* ========= helpers ========= */
 
 function bearerHeaders(token?: string | null): HeadersInit {
-  const h: HeadersInit = { Accept: 'application/json' };
+  const h: HeadersInit = { Accept: "application/json" };
   if (token) (h as any).Authorization = `Bearer ${token}`;
   return h;
 }
 
 async function readJson<T = any>(res: Response): Promise<T> {
-  const txt = await res.text().catch(() => '');
+  const txt = await res.text().catch(() => "");
   try {
     return txt ? JSON.parse(txt) : ({} as any);
   } catch {
@@ -33,9 +33,9 @@ const pickMsg = (d: any, fb: string) =>
   d?.error?.message || d?.message || d?.detail || d?.title || fb;
 
 function fmtDate(iso?: string | null) {
-  if (!iso) return '-';
+  if (!iso) return "-";
   try {
-    return new Date(iso).toLocaleString('tr-TR');
+    return new Date(iso).toLocaleString("tr-TR");
   } catch {
     return iso;
   }
@@ -106,7 +106,10 @@ type Marker = {
 
 export default function CourierLocationClient() {
   const token = React.useMemo(() => getAuthToken(), []);
-  const headers = React.useMemo<HeadersInit>(() => bearerHeaders(token), [token]);
+  const headers = React.useMemo<HeadersInit>(
+    () => bearerHeaders(token),
+    [token]
+  );
 
   // access kontrolü (Modül 1: Kurye)
   const { access } = useSupportAccess();
@@ -116,9 +119,9 @@ export default function CourierLocationClient() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  const [limit, setLimit] = React.useState<number | ''>('');
+  const [limit, setLimit] = React.useState<number | "">("");
   const [offset, setOffset] = React.useState<number>(0);
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = React.useState("");
 
   const [info, setInfo] = React.useState<string | null>(null);
   function toast(msg: string) {
@@ -128,9 +131,13 @@ export default function CourierLocationClient() {
 
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
 
+  const [maximizeMap, setMaximizeMap] = React.useState(false);
+
+  const sectionRef = React.useRef<HTMLElement>(null);
+
   const load = React.useCallback(async () => {
     if (!token) {
-      setError('Oturum bulunamadı.');
+      setError("Oturum bulunamadı.");
       setRows([]);
       return;
     }
@@ -141,14 +148,14 @@ export default function CourierLocationClient() {
     try {
       // backend: GET /api/support/couriers
       // front:   /yuksi/support/couriers
-      const url = new URL('/yuksi/support/couriers', window.location.origin);
-      if (limit !== '') url.searchParams.set('limit', String(limit));
-      url.searchParams.set('offset', String(offset));
-      if (search.trim()) url.searchParams.set('search', search.trim());
+      const url = new URL("/yuksi/support/couriers", window.location.origin);
+      if (limit !== "") url.searchParams.set("limit", String(limit));
+      url.searchParams.set("offset", String(offset));
+      if (search.trim()) url.searchParams.set("search", search.trim());
 
       const res = await fetch(url.toString(), {
         headers,
-        cache: 'no-store',
+        cache: "no-store",
       });
 
       const data = await readJson<CourierListResponse>(res);
@@ -176,17 +183,16 @@ export default function CourierLocationClient() {
         return {
           id: String(x.id),
           first_name: String(x.first_name ?? x.firstName ?? ""),
-        last_name: String(x.last_name ?? x.lastName ?? ""),
+          last_name: String(x.last_name ?? x.lastName ?? ""),
           email: (x.email as any) ?? null,
           phone: (x.phone as any) ?? null,
           plate: x.plate ?? null,
           vehicle_type:
             x.vehicle_type ??
             x.vehicleType ??
-            (typeof x.vehicleType === 'number'
+            (typeof x.vehicleType === "number"
               ? String(x.vehicleType)
-              : x.vehicleType ??
-                null),
+              : x.vehicleType ?? null),
           city: x.city ?? x.stateName ?? null,
           address: x.address ?? null,
           is_active: Boolean(x.is_active ?? x.isActive ?? x.active ?? true),
@@ -197,9 +203,9 @@ export default function CourierLocationClient() {
       });
 
       setRows(mapped);
-      if (!arr.length) toast('Kayıt bulunamadı veya liste boş.');
+      if (!arr.length) toast("Kayıt bulunamadı veya liste boş.");
     } catch (e: any) {
-      setError(e?.message || 'Kurye listesi getirilemedi.');
+      setError(e?.message || "Kurye listesi getirilemedi.");
       setRows([]);
     } finally {
       setLoading(false);
@@ -221,7 +227,7 @@ export default function CourierLocationClient() {
       list.push({
         id: c.id,
         name: `${c.first_name} ${c.last_name}`.trim() || `#${c.id}`,
-        phone: c.phone || '',
+        phone: c.phone || "",
         lat: Number(latitude),
         lng: Number(longitude),
       });
@@ -242,8 +248,8 @@ export default function CourierLocationClient() {
       <div className="rounded-2xl bg-white p-6 shadow">
         <h1 className="text-xl font-semibold mb-2">Kurye Konumları</h1>
         <p className="text-sm text-rose-600">
-          Bu sayfayı görüntülemek için <strong>Kurye (Modül 1)</strong> yetkisine
-          sahip olmanız gerekiyor.
+          Bu sayfayı görüntülemek için <strong>Kurye (Modül 1)</strong>{" "}
+          yetkisine sahip olmanız gerekiyor.
         </p>
       </div>
     );
@@ -256,9 +262,12 @@ export default function CourierLocationClient() {
       {/* header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Kurye Konumları</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Kurye Konumları
+          </h1>
           <p className="text-sm text-neutral-600">
-            Çağrı merkezi için kuryelerin anlık konumlarını harita üzerinde görüntüleyin.
+            Çağrı merkezi için kuryelerin anlık konumlarını harita üzerinde
+            görüntüleyin.
           </p>
         </div>
 
@@ -269,7 +278,7 @@ export default function CourierLocationClient() {
             min={1}
             value={limit}
             onChange={(e) =>
-              setLimit(e.target.value === '' ? '' : Number(e.target.value))
+              setLimit(e.target.value === "" ? "" : Number(e.target.value))
             }
             className="w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
             placeholder="200"
@@ -292,7 +301,7 @@ export default function CourierLocationClient() {
       </div>
 
       {/* search + map + side list */}
-      <section className="rounded-2xl border border-neutral-200/70 bg-white shadow-sm p-4 space-y-4">
+      <section className="rounded-2xl border border-neutral-200/70 bg-white shadow-sm p-4 space-y-4" ref={sectionRef}>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex-1">
             <input
@@ -307,9 +316,7 @@ export default function CourierLocationClient() {
           </div>
         </div>
 
-        {error && (
-          <div className="px-1 text-sm text-rose-600">{error}</div>
-        )}
+        {error && <div className="px-1 text-sm text-rose-600">{error}</div>}
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)]">
           {/* Harita */}
@@ -319,6 +326,30 @@ export default function CourierLocationClient() {
                 markers={markers}
                 selectedId={selectedId}
                 onSelect={setSelectedId}
+                overlay={
+                  <>
+                    <div className="pointer-events-auto absolute right-3 top-3 z-10 flex flex-col gap-2">
+                      <button
+                        onClick={() => {
+                          if (maximizeMap) {
+                            document.exitFullscreen();
+                          } else {
+                            sectionRef.current?.requestFullscreen();
+                          }
+                          setMaximizeMap(!maximizeMap);
+                        }}
+                        title={maximizeMap ? "Küçült" : "Tam Ekran"}
+                        className="grid cursor-pointer h-10 w-10 place-items-center rounded-md bg-neutral-700 text-white shadow"
+                      >
+                        {maximizeMap ? (
+                          <Minimize2 className="h-5 w-5" />
+                        ) : (
+                          <Maximize2 className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </>
+                }
               />
             ) : (
               <div className="flex h-[420px] items-center justify-center rounded-xl border border-dashed border-neutral-300 bg-white text-sm text-neutral-500">
@@ -338,15 +369,21 @@ export default function CourierLocationClient() {
                   <div className="text-base font-semibold text-neutral-900">
                     {selectedCourier.first_name} {selectedCourier.last_name}
                   </div>
-                  <div className="text-xs text-neutral-500">#{selectedCourier.id}</div>
+                  <div className="text-xs text-neutral-500">
+                    #{selectedCourier.id}
+                  </div>
                   <div className="mt-2 text-neutral-800">
-                    {selectedCourier.phone || <span className="text-neutral-400">Telefon yok</span>}
+                    {selectedCourier.phone || (
+                      <span className="text-neutral-400">Telefon yok</span>
+                    )}
                   </div>
                   <div className="text-neutral-800">
-                    {selectedCourier.email || <span className="text-neutral-400">E-posta yok</span>}
+                    {selectedCourier.email || (
+                      <span className="text-neutral-400">E-posta yok</span>
+                    )}
                   </div>
                   <div className="mt-2 text-xs text-neutral-600">
-                    {selectedCourier.city || '-'}
+                    {selectedCourier.city || "-"}
                   </div>
                   {selectedCourier.address && (
                     <div className="text-xs text-neutral-600 line-clamp-3">
@@ -359,7 +396,8 @@ export default function CourierLocationClient() {
                 </div>
               ) : (
                 <div className="text-sm text-neutral-500">
-                  Haritadaki bir kuryeye tıklayarak detayları burada görebilirsiniz.
+                  Haritadaki bir kuryeye tıklayarak detayları burada
+                  görebilirsiniz.
                 </div>
               )}
             </div>
@@ -392,7 +430,7 @@ export default function CourierLocationClient() {
                             type="button"
                             onClick={() => setSelectedId(c.id)}
                             className={`flex w-full items-start justify-between gap-2 px-3 py-2 text-left text-sm ${
-                              active ? 'bg-orange-50' : 'hover:bg-neutral-50'
+                              active ? "bg-orange-50" : "hover:bg-neutral-50"
                             }`}
                           >
                             <div>
@@ -403,10 +441,14 @@ export default function CourierLocationClient() {
                                 #{c.id}
                               </div>
                               <div className="mt-1 text-xs text-neutral-700">
-                                {c.phone || <span className="text-neutral-400">Telefon yok</span>}
+                                {c.phone || (
+                                  <span className="text-neutral-400">
+                                    Telefon yok
+                                  </span>
+                                )}
                               </div>
                               <div className="text-[11px] text-neutral-500">
-                                {c.city || '-'}
+                                {c.city || "-"}
                               </div>
                             </div>
                             <div className="mt-1 shrink-0 text-[11px]">
