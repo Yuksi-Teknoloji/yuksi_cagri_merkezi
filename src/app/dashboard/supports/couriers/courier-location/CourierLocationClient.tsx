@@ -301,7 +301,10 @@ export default function CourierLocationClient() {
       </div>
 
       {/* search + map + side list */}
-      <section className="rounded-2xl border border-neutral-200/70 bg-white shadow-sm p-4 space-y-4" ref={sectionRef}>
+      <section
+        className="rounded-2xl border border-neutral-200/70 bg-white shadow-sm p-4 space-y-4"
+        ref={sectionRef}
+      >
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex-1">
             <input
@@ -320,12 +323,17 @@ export default function CourierLocationClient() {
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)]">
           {/* Harita */}
-          <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-3">
+          <div
+            className={`rounded-2xl border border-neutral-200/70 bg-neutral-50 p-3 ${
+              maximizeMap ? "h-[85vh]" : ""
+            }`}
+          >
             {markers.length > 0 ? (
               <LiveLeaflet
                 markers={markers}
                 selectedId={selectedId}
                 onSelect={setSelectedId}
+                isMaximize={maximizeMap}
                 overlay={
                   <>
                     <div className="pointer-events-auto absolute right-3 top-3 z-10 flex flex-col gap-2">
@@ -359,7 +367,9 @@ export default function CourierLocationClient() {
           </div>
 
           {/* Sağ panel: seçili kurye / liste */}
-          <div className="flex flex-col gap-3">
+          <div
+            className={`flex flex-col gap-3 ${maximizeMap ? "h-[85vh]" : ""}`}
+          >
             <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-3">
               <div className="mb-2 text-sm font-semibold text-neutral-700">
                 Seçili Kurye
@@ -402,11 +412,17 @@ export default function CourierLocationClient() {
               )}
             </div>
 
-            <div className="flex-1 overflow-auto rounded-2xl border border-neutral-200/70 bg-white">
+            <div
+              className="flex-1 rounded-2xl border border-neutral-200/70 bg-white"
+            >
               <div className="border-b border-neutral-200/70 px-3 py-2 text-xs font-semibold text-neutral-600">
                 Kurye Listesi
               </div>
-              <div className="max-h-[280px] overflow-auto">
+              <div
+                className={` overflow-auto ${
+                  maximizeMap ? "h-[55vh]" : "max-h-[280px]"
+                }`}
+              >
                 {loading && (
                   <div className="px-4 py-4 text-sm text-neutral-500">
                     Yükleniyor…
@@ -420,7 +436,9 @@ export default function CourierLocationClient() {
                 )}
 
                 {!loading && rows.length > 0 && (
-                  <ul className="divide-y divide-neutral-200/70">
+                  <ul
+                    className="divide-y divide-neutral-200/70"
+                  >
                     {rows.map((c) => {
                       const hasLoc = !!c.location;
                       const active = selectedId === c.id;

@@ -24,11 +24,13 @@ export default function LiveLeaflet({
   selectedId,
   onSelect,
   overlay,
+  isMaximize,
 }: {
   markers: Marker[];
   selectedId: string | null;
   onSelect: (id: string) => void;
   overlay?: React.ReactNode;
+  isMaximize: boolean;
 }) {
   const defaultCenter: [number, number] = [41.015137, 28.97953]; // İstanbul
 
@@ -52,7 +54,7 @@ export default function LiveLeaflet({
   }, [markers]);
 
   return (
-    <div className="relative" style={{ height: 420 }}>
+    <div className={`relative ${isMaximize ? "h-[80vh]" : "h-130"}`}>
       <MapContainer
         center={defaultCenter}
         zoom={12}
