@@ -28,7 +28,7 @@ export default function LiveLeaflet({
 }: {
   markers: Marker[];
   selectedId: string | null;
-  onSelect: (id: string) => void;
+  onSelect?: (id: string) => void;
   overlay?: React.ReactNode;
   isMaximize: boolean;
 }) {
@@ -78,7 +78,7 @@ export default function LiveLeaflet({
                 weight: active ? 3 : 2,
                 fillOpacity: 0.8,
               }}
-              eventHandlers={{ click: () => onSelect(m.id) }}
+              eventHandlers={{ click: () => onSelect?.(m.id) }}
             >
               <Tooltip
                 direction="top"

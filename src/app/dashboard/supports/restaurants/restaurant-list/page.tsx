@@ -10,6 +10,10 @@ const MapPicker = dynamic(() => import("@/src/components/map/MapPicker"), {
   ssr: false,
 });
 
+const Map = dynamic(() => import("@/src/components/map/RLMap"), {
+  ssr: false,
+});
+
 function bearerHeaders(token?: string | null): HeadersInit {
   const h: HeadersInit = { Accept: "application/json" };
   if (token) (h as any).Authorization = `Bearer ${token}`;
@@ -71,6 +75,7 @@ type Restaurant = {
 };
 
 type RestaurantDetail = {
+  id: string;
   contactPerson?: string | null;
   taxNumber?: string | null;
   latitude?: string | null;
@@ -500,9 +505,26 @@ export default function RestaurantList() {
                 <div>{detailRows?.taxNumber}</div>
               </div>
               <div className="col-span-2">
+                <label className="mb-1 block text-sm font-medium">
+                  Restoran Konumu
+                </label>
+                <div>
+                  <Map
+                    center={[
+                      Number(detailRows?.latitude),
+                      Number(detailRows?.longitude),
+                    ]}
+                    marker={[
+                      Number(detailRows?.latitude),
+                      Number(detailRows?.longitude),
+                    ]}
+                    onPick={() => {}}
+                  />
+                </div>
+              </div>
+              <div className="col-span-2">
                 <label className="mb-1 block font-bold">Paket Bilgileri</label>
               </div>
-
               <div>
                 <label className="mb-1 block text-sm font-medium">
                   Kalan Paket
