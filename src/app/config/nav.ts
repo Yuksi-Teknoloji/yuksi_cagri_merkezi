@@ -220,10 +220,7 @@ export const NAV: Record<Role, RawNavGroup[]> = {
     {
       title: "Restoran İşlemleri",
       items: [
-        { label: "Restoran Listesi", path: "supports/restaurants/restaurant-list", requiredAccess: [3] },
-        { label: "Restoran Paketleri", path: "supports/restaurants/restaurant-packages", requiredAccess: [3] },
-        { label: "Restoran Konumları", path: "supports/restaurants/restaurant-location", requiredAccess: [3] },
-        { label: "Restoran İstatistikleri", path: "supports/restaurants/restaurant-stats", requiredAccess: [3] },
+        { label: "Restoran Listesi", path: "supports/restaurants/restaurant-list", requiredAccess: [3] }
       ],
     },
      {
