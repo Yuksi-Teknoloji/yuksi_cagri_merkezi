@@ -151,6 +151,13 @@ export default function RestaurantList() {
   const [detailRows, setDetailRows] = React.useState<RestaurantDetail | null>();
   const [detailErr, setDetailErr] = React.useState<string | null>(null);
 
+  const [page, setPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(10);
+  const pageRows = React.useMemo(
+    () => rows.slice((page - 1) * pageSize, page * pageSize),
+    [rows, page, pageSize]
+  );
+
   const [info, setInfo] = React.useState<string | null>(null);
   function toast(msg: string) {
     setInfo(msg);
@@ -228,6 +235,7 @@ export default function RestaurantList() {
           : null,
       }));
       setRows(mapped);
+      setPage(1);
       if (!arr.length) toast("Kayıt bulunamadı veya liste boş.");
     } catch (e: any) {
       setError(e?.message || "Restoran listesi getirilemedi.");
@@ -357,6 +365,20 @@ export default function RestaurantList() {
             <p className="mt-1 text-xs text-neutral-500">
               Toplam {rows.length} kayıt yüklendi.
             </p>
+            <span className="flex justify-end items-center gap-2">
+              <label className="text-sm text-neutral-600">Sayfa Boyutu</label>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="rounded-lg border border-neutral-300 bg-neutral-100 px-3 py-2 text-sm"
+              >
+                {[10, 20, 50].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </span>
           </div>
         </div>
 
@@ -392,7 +414,7 @@ export default function RestaurantList() {
             )}
 
             {!loading &&
-              rows.map((r) => (
+              pageRows.map((r) => (
                 <div
                   key={r.id}
                   className="border-b border-neutral-200/70 md:grid md:grid-cols-6 hover:bg-neutral-50 bg-[#FFF4EE]"
@@ -461,6 +483,63 @@ export default function RestaurantList() {
                   </div>
                 </div>
               ))}
+          </div>
+
+          <div className="flex items-center bg-white justify-between p-4 border-t border-neutral-200/70 text-sm text-neutral-600">
+            <div>
+              Toplam{" "}
+              <span className="font-medium text-neutral-800">
+                {rows.length}
+              </span>
+              kayıt • &nbsp;Sayfa {page}/
+              {Math.max(1, Math.ceil(rows.length / pageSize))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                onClick={() => setPage(1)}
+                disabled={page <= 1 || loading}
+              >
+                « İlk
+              </button>
+              <button
+                className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1 || loading}
+              >
+                ‹ Önceki
+              </button>
+              <button
+                className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                onClick={() =>
+                  setPage((p) =>
+                    Math.min(
+                      Math.max(1, Math.ceil(rows.length / pageSize)),
+                      p + 1
+                    )
+                  )
+                }
+                disabled={
+                  page >= Math.max(1, Math.ceil(rows.length / pageSize)) ||
+                  loading
+                }
+              >
+                Sonraki ›
+              </button>
+              <button
+                className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                onClick={() =>
+                  setPage(Math.max(1, Math.ceil(rows.length / pageSize)))
+                }
+                disabled={
+                  page >= Math.max(1, Math.ceil(rows.length / pageSize)) ||
+                  loading
+                }
+              >
+                Son »
+              </button>
+            </div>
           </div>
         </div>
       </section>
