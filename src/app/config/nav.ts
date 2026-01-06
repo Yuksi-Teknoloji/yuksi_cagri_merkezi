@@ -255,7 +255,6 @@ export const NAV: Record<Role, RawNavGroup[]> = {
       items: [
         { label: "Ticarim Listesi", path: "supports/commercials/commercial-list", requiredAccess: [7] },
         { label: "Ticarim Paketleri", path: "supports/commercials/commercial-packages", requiredAccess: [7] },
-        { label: "Ticarim Konumları", path: "supports/commercials/commercial-location", requiredAccess: [7] },
         { label: "Ticarim İstatistikleri", path: "supports/commercials/commercial-stats", requiredAccess: [7] },
       ],
     },
