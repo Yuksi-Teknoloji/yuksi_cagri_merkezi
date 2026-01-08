@@ -362,6 +362,7 @@ export default function Header({
               </div>
             )}
           </div>
+          
 
           {/* User menu */}
           <div className="relative" ref={menuRef}>
