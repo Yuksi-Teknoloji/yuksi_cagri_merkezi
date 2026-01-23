@@ -5,7 +5,7 @@ import * as React from "react";
 import { getAuthToken } from "@/src/utils/auth";
 
 /** backend’de tanımlı access id’leri */
-export type SupportAccessId = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type SupportAccessId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 /** GET /api/admin/support/me response tipi */
 type SupportUserDetailResponse = {
@@ -87,7 +87,7 @@ export function useSupportAccess() {
           ? (rawAccess
               .map((v: any) => Number(v))
               .filter(
-                (n) => !Number.isNaN(n) && n >= 1 && n <= 7
+                (n) => !Number.isNaN(n) && n >= 1 && n <= 8
               ) as SupportAccessId[])
           : [];
 

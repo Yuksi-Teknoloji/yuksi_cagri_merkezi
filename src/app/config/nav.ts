@@ -258,6 +258,26 @@ export const NAV: Record<Role, RawNavGroup[]> = {
         { label: "Ticarim İstatistikleri", path: "supports/commercials/commercial-stats", requiredAccess: [7] },
       ],
     },
+    {
+      title: "Başvuru Yönetimi",
+      items: [
+        {
+          label: "Bayi Başvuruları",
+          path: "supports/applications/dealer-forms",
+          requiredAccess: [8],
+        },
+        {
+          label: "Kurumsal Başvurular",
+          path: "supports/applications/corporate-forms",
+          requiredAccess: [8],
+        },
+        {
+          label: "Taşıyıcı Başvuruları",
+          path: "supports/applications/carrier-applications",
+          requiredAccess: [8],
+        },
+      ],
+    },
   ],
 };
 
