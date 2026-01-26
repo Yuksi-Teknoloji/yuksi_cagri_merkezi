@@ -148,15 +148,15 @@ export default function ApplicationsList(props: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-          <p className="text-sm text-neutral-600">{description}</p>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">{title}</h1>
+          <p className="text-xs sm:text-sm text-neutral-600 mt-1">{description}</p>
         </div>
 
         <button
           onClick={load}
-          className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-600"
+          className="rounded-xl bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-orange-600 whitespace-nowrap self-start sm:self-auto"
           disabled={loading}
         >
           {loading ? "Yükleniyor…" : "Yenile"}

@@ -260,40 +260,44 @@ export default function CourierLocationClient() {
   return (
     <div className="space-y-6">
       {/* header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
             Kurye Konumları
           </h1>
-          <p className="text-sm text-neutral-600">
+          <p className="text-xs sm:text-sm text-neutral-600 mt-1">
             Çağrı merkezi için kuryelerin anlık konumlarını harita üzerinde
             görüntüleyin.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-xs text-neutral-600">Limit</label>
-          <input
-            type="number"
-            min={1}
-            value={limit}
-            onChange={(e) =>
-              setLimit(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
-            placeholder="200"
-          />
-          <label className="text-xs text-neutral-600">Offset</label>
-          <input
-            type="number"
-            min={0}
-            value={offset}
-            onChange={(e) => setOffset(Number(e.target.value) || 0)}
-            className="w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
-          />
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-neutral-600 whitespace-nowrap">Limit</label>
+            <input
+              type="number"
+              min={1}
+              value={limit}
+              onChange={(e) =>
+                setLimit(e.target.value === "" ? "" : Number(e.target.value))
+              }
+              className="w-20 sm:w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
+              placeholder="200"
+            />
+          </div>
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-neutral-600 whitespace-nowrap">Offset</label>
+            <input
+              type="number"
+              min={0}
+              value={offset}
+              onChange={(e) => setOffset(Number(e.target.value) || 0)}
+              className="w-20 sm:w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
+            />
+          </div>
           <button
             onClick={load}
-            className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-600"
+            className="rounded-xl bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-orange-600 whitespace-nowrap"
           >
             Yenile
           </button>
@@ -324,7 +328,7 @@ export default function CourierLocationClient() {
         <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)]">
           {/* Harita */}
           <div
-            className={`rounded-2xl border border-neutral-200/70 bg-neutral-50 p-3 ${
+            className={`rounded-2xl border border-neutral-200/70 bg-neutral-50 p-2 sm:p-3 ${
               maximizeMap ? "h-[85vh]" : ""
             }`}
           >
@@ -368,10 +372,10 @@ export default function CourierLocationClient() {
 
           {/* Sağ panel: seçili kurye / liste */}
           <div
-            className={`flex flex-col gap-3 ${maximizeMap ? "h-[85vh]" : ""}`}
+            className={`flex flex-col gap-2 sm:gap-3 ${maximizeMap ? "h-[85vh]" : ""}`}
           >
-            <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-3">
-              <div className="mb-2 text-sm font-semibold text-neutral-700">
+            <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-2 sm:p-3">
+              <div className="mb-2 text-xs sm:text-sm font-semibold text-neutral-700">
                 Seçili Kurye
               </div>
               {selectedCourier ? (
@@ -415,12 +419,12 @@ export default function CourierLocationClient() {
             <div
               className="flex-1 rounded-2xl border border-neutral-200/70 bg-white"
             >
-              <div className="border-b border-neutral-200/70 px-3 py-2 text-xs font-semibold text-neutral-600">
+              <div className="border-b border-neutral-200/70 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold text-neutral-600">
                 Kurye Listesi
               </div>
               <div
                 className={` overflow-auto ${
-                  maximizeMap ? "h-[55vh]" : "max-h-[280px]"
+                  maximizeMap ? "h-[55vh]" : "max-h-[200px] sm:max-h-[280px]"
                 }`}
               >
                 {loading && (
@@ -447,35 +451,35 @@ export default function CourierLocationClient() {
                           <button
                             type="button"
                             onClick={() => setSelectedId(c.id)}
-                            className={`flex w-full items-start justify-between gap-2 px-3 py-2 text-left text-sm ${
+                            className={`flex w-full items-start justify-between gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs sm:text-sm ${
                               active ? "bg-orange-50" : "hover:bg-neutral-50"
                             }`}
                           >
-                            <div>
-                              <div className="font-semibold text-neutral-900">
+                            <div className="min-w-0 flex-1">
+                              <div className="font-semibold text-neutral-900 break-words">
                                 {c.first_name} {c.last_name}
                               </div>
-                              <div className="text-[11px] text-neutral-500">
+                              <div className="text-[10px] sm:text-[11px] text-neutral-500">
                                 #{c.id}
                               </div>
-                              <div className="mt-1 text-xs text-neutral-700">
+                              <div className="mt-1 text-[10px] sm:text-xs text-neutral-700 break-all">
                                 {c.phone || (
                                   <span className="text-neutral-400">
                                     Telefon yok
                                   </span>
                                 )}
                               </div>
-                              <div className="text-[11px] text-neutral-500">
+                              <div className="text-[10px] sm:text-[11px] text-neutral-500">
                                 {c.city || "-"}
                               </div>
                             </div>
-                            <div className="mt-1 shrink-0 text-[11px]">
+                            <div className="mt-1 shrink-0 text-[9px] sm:text-[11px]">
                               {hasLoc ? (
-                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                                <span className="rounded-full bg-emerald-50 px-1.5 sm:px-2 py-0.5 font-semibold text-emerald-700 ring-1 ring-emerald-100 whitespace-nowrap">
                                   Konum Var
                                 </span>
                               ) : (
-                                <span className="rounded-full bg-neutral-100 px-2 py-0.5 font-semibold text-neutral-500 ring-1 ring-neutral-200">
+                                <span className="rounded-full bg-neutral-100 px-1.5 sm:px-2 py-0.5 font-semibold text-neutral-500 ring-1 ring-neutral-200 whitespace-nowrap">
                                   Konum Yok
                                 </span>
                               )}

@@ -553,9 +553,9 @@ export default function TicarimAdminPage() {
     return (
         <div className="space-y-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <h1 className="text-2xl font-semibold text-neutral-900">Ticarim-Çağrı Merkezi</h1>
-                    <p className="mt-1 text-sm text-neutral-600">
+                <div className="flex-1">
+                    <h1 className="text-xl sm:text-2xl font-semibold text-neutral-900">Ticarim-Çağrı Merkezi</h1>
+                    <p className="mt-1 text-xs sm:text-sm text-neutral-600">
                         Kullanıcı ilanlarını görüntüle, düzenle, onayla, reddet, yayından kaldır.
                     </p>
                 </div>

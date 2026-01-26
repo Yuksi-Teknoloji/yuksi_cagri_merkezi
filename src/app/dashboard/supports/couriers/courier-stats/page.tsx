@@ -406,40 +406,44 @@ export default function CourierStatsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
             Kurye İstatistikleri
           </h1>
-          <p className="text-sm text-neutral-600">
+          <p className="text-xs sm:text-sm text-neutral-600 mt-1">
             Çağrı merkezi için kuryelerin performans ve durum bilgilerini
             görüntüleyin.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-xs text-neutral-600">Limit</label>
-          <input
-            type="number"
-            min={1}
-            value={limit}
-            onChange={(e) =>
-              setLimit(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
-            placeholder="200"
-          />
-          <label className="text-xs text-neutral-600">Offset</label>
-          <input
-            type="number"
-            min={0}
-            value={offset}
-            onChange={(e) => setOffset(Number(e.target.value) || 0)}
-            className="w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
-          />
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-neutral-600 whitespace-nowrap">Limit</label>
+            <input
+              type="number"
+              min={1}
+              value={limit}
+              onChange={(e) =>
+                setLimit(e.target.value === "" ? "" : Number(e.target.value))
+              }
+              className="w-20 sm:w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
+              placeholder="200"
+            />
+          </div>
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-neutral-600 whitespace-nowrap">Offset</label>
+            <input
+              type="number"
+              min={0}
+              value={offset}
+              onChange={(e) => setOffset(Number(e.target.value) || 0)}
+              className="w-20 sm:w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
+            />
+          </div>
           <button
             onClick={loadCouriers}
-            className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-600"
+            className="rounded-xl bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-orange-600 whitespace-nowrap"
           >
             Yenile
           </button>

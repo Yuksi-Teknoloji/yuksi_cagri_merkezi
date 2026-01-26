@@ -276,10 +276,10 @@ export default function ApplicationDetailPage() {
 
   return (
     <div className="space-y-6 bg-neutral-50/80 rounded-3xl p-1">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Başvuru Detayı</h1>
-          <p className="text-sm text-neutral-600">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">Başvuru Detayı</h1>
+          <p className="text-xs sm:text-sm text-neutral-600 mt-1">
             <span className="font-semibold">Başvuru Tipi:</span>{" "}
             {applicationType === "dealer_form"
               ? "Bayi Başvurusu"
@@ -288,7 +288,7 @@ export default function ApplicationDetailPage() {
               : "Taşıyıcı Başvurusu"}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Link
             href={`/dashboard/supports/applications/${
               applicationType === "dealer_form"
@@ -297,13 +297,13 @@ export default function ApplicationDetailPage() {
                 ? "corporate-forms"
                 : "carrier-applications"
             }`}
-            className="rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-800 hover:bg-neutral-50"
+            className="rounded-xl border border-neutral-300 bg-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-neutral-800 hover:bg-neutral-50 whitespace-nowrap"
           >
             Listeye Dön
           </Link>
           <button
             onClick={load}
-            className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600"
+            className="rounded-xl bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white hover:bg-orange-600 whitespace-nowrap"
             disabled={loading}
           >
             {loading ? "Yükleniyor…" : "Yenile"}
@@ -457,14 +457,14 @@ export default function ApplicationDetailPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div className="text-xs text-neutral-500">
                   Son görüşme: <span className="font-semibold">{fmtDateTR(reviewedAt)}</span>
                 </div>
                 <button
                   onClick={saveReview}
                   disabled={saving}
-                  className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-60"
+                  className="rounded-xl bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-60 whitespace-nowrap"
                 >
                   {saving ? "Kaydediliyor…" : "Kaydet"}
                 </button>
@@ -513,20 +513,20 @@ export default function ApplicationDetailPage() {
 
       {/* Kara Liste Onay Popup */}
       {blConfirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl mx-4">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-2">Kara Listeye Ekle</h3>
-            <p className="text-sm text-neutral-600 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 sm:p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-4 sm:p-6 shadow-xl">
+            <h3 className="text-base sm:text-lg font-semibold text-neutral-900 mb-2">Kara Listeye Ekle</h3>
+            <p className="text-xs sm:text-sm text-neutral-600 mb-4">
               <strong>{contact.name}</strong> isimli kişiyi kara listeye eklemek istediğinize emin misiniz?
             </p>
-            <div className="rounded-xl bg-neutral-50 border border-neutral-200 p-3 mb-4">
+            <div className="rounded-xl bg-neutral-50 border border-neutral-200 p-2 sm:p-3 mb-4">
               <div className="text-xs text-neutral-500 mb-1">Neden</div>
-              <div className="text-sm text-neutral-800">{blReason}</div>
+              <div className="text-xs sm:text-sm text-neutral-800 break-words">{blReason}</div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => setBlConfirmOpen(false)}
-                className="flex-1 rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+                className="flex-1 rounded-xl border border-neutral-300 bg-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
               >
                 Vazgeç
               </button>
@@ -535,7 +535,7 @@ export default function ApplicationDetailPage() {
                   setBlConfirmOpen(false);
                   addToBlacklist();
                 }}
-                className="flex-1 rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
+                className="flex-1 rounded-xl bg-rose-600 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white hover:bg-rose-700"
               >
                 Onayla
               </button>

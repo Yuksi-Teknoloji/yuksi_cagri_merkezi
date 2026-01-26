@@ -317,40 +317,44 @@ export default function CourierList() {
   return (
     <div className="space-y-6">
       {/* header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
             Kurye Listesi
           </h1>
-          <p className="text-sm text-neutral-600">
+          <p className="text-xs sm:text-sm text-neutral-600 mt-1">
             Çağrı merkezi için tüm kuryelerin listesini görüntüleyin (Modül 1
             gerekli).
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-xs text-neutral-600">Limit</label>
-          <input
-            type="number"
-            min={1}
-            value={limit}
-            onChange={(e) =>
-              setLimit(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
-            placeholder="200"
-          />
-          <label className="text-xs text-neutral-600">Offset</label>
-          <input
-            type="number"
-            min={0}
-            value={offset}
-            onChange={(e) => setOffset(Number(e.target.value) || 0)}
-            className="w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
-          />
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-neutral-600 whitespace-nowrap">Limit</label>
+            <input
+              type="number"
+              min={1}
+              value={limit}
+              onChange={(e) =>
+                setLimit(e.target.value === "" ? "" : Number(e.target.value))
+              }
+              className="w-20 sm:w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
+              placeholder="200"
+            />
+          </div>
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-neutral-600 whitespace-nowrap">Offset</label>
+            <input
+              type="number"
+              min={0}
+              value={offset}
+              onChange={(e) => setOffset(Number(e.target.value) || 0)}
+              className="w-20 sm:w-24 rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-orange-200"
+            />
+          </div>
           <button
             onClick={load}
-            className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-600"
+            className="rounded-xl bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-orange-600 whitespace-nowrap"
           >
             Yenile
           </button>
@@ -474,12 +478,12 @@ export default function CourierList() {
                     {fmtDate(c.created_at)}
                   </div>
                   <div className="px-4 py-3 text-sm text-center md:text-left">
-                    <div className="md:hidden text-[11px] text-neutral-500">
+                    <div className="md:hidden text-[11px] text-neutral-500 mb-1">
                       Paketler
                     </div>
                     <button
                       onClick={() => loadPackages(c)}
-                      className="rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-orange-600"
+                      className="rounded-lg bg-orange-500 px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-orange-600 whitespace-nowrap"
                     >
                       Paketleri Gör
                     </button>
@@ -487,8 +491,8 @@ export default function CourierList() {
                 </div>
               ))}
 
-            <div className="flex items-center bg-white justify-between p-4 border-t border-neutral-200/70 text-sm text-neutral-600">
-              <div>
+            <div className="flex flex-col sm:flex-row items-center bg-white justify-between p-3 sm:p-4 border-t border-neutral-200/70 text-xs sm:text-sm text-neutral-600 gap-3">
+              <div className="text-center sm:text-left">
                 Toplam{" "}
                 <span className="font-medium text-neutral-800">
                   {rows.length}
@@ -496,30 +500,30 @@ export default function CourierList() {
                 kayıt • &nbsp;Sayfa {page}/{Math.max(1, Math.ceil(rows.length / pageSize))}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center">
                 <button
-                  className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                  className="rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs border border-neutral-300 disabled:opacity-50"
                   onClick={() => setPage(1)}
                   disabled={page <= 1 || loading}
                 >
                   « İlk
                 </button>
                 <button
-                  className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                  className="rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs border border-neutral-300 disabled:opacity-50"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1 || loading}
                 >
                   ‹ Önceki
                 </button>
                 <button
-                  className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                  className="rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs border border-neutral-300 disabled:opacity-50"
                   onClick={() => setPage((p) => Math.min(Math.max(1, Math.ceil(rows.length / pageSize)), p + 1))}
                   disabled={page >= Math.max(1, Math.ceil(rows.length / pageSize)) || loading}
                 >
                   Sonraki ›
                 </button>
                 <button
-                  className="rounded-md px-3 py-1.5 border border-neutral-300 disabled:opacity-50"
+                  className="rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-xs border border-neutral-300 disabled:opacity-50"
                   onClick={() => setPage(Math.max(1, Math.ceil(rows.length / pageSize)))}
                   disabled={page >= Math.max(1, Math.ceil(rows.length / pageSize)) || loading}
                 >
@@ -609,16 +613,16 @@ function PackagesModal(props: {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
       <div className="w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-xl flex flex-col">
-        <div className="flex items-center justify-between border-b px-5 py-4">
-          <div>
-            <h3 className="text-lg font-semibold">Kurye Paketleri</h3>
-            <p className="text-xs text-neutral-600">
+        <div className="flex items-start sm:items-center justify-between border-b px-3 sm:px-5 py-3 sm:py-4 gap-2">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base sm:text-lg font-semibold">Kurye Paketleri</h3>
+            <p className="text-xs text-neutral-600 break-words">
               {courier.first_name} {courier.last_name} – #{courier.id}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-full p-2 hover:bg-neutral-100"
+            className="rounded-full p-2 hover:bg-neutral-100 shrink-0"
             aria-label="Kapat"
           >
             ✕
@@ -670,18 +674,19 @@ function PackagesModal(props: {
           )}
 
           {!loading && packages.length > 0 && (
-            <table className="min-w-full border-t border-neutral-200/70 text-sm">
-              <thead>
-                <tr className="text-left text-xs text-neutral-500">
-                  <th className="px-4 py-2 font-medium">Kod</th>
-                  <th className="px-4 py-2 font-medium">Müşteri</th>
-                  <th className="px-4 py-2 font-medium">Adres</th>
-                  <th className="px-4 py-2 font-medium">Tür / Kargo</th>
-                  <th className="px-4 py-2 font-medium">Durum</th>
-                  <th className="px-4 py-2 font-medium text-right">Tutar</th>
-                  <th className="px-4 py-2 font-medium w-[130px]">Harita</th>
-                </tr>
-              </thead>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border-t border-neutral-200/70 text-sm">
+                <thead>
+                  <tr className="text-left text-xs text-neutral-500">
+                    <th className="px-2 sm:px-4 py-2 font-medium">Kod</th>
+                    <th className="px-2 sm:px-4 py-2 font-medium">Müşteri</th>
+                    <th className="px-2 sm:px-4 py-2 font-medium hidden sm:table-cell">Adres</th>
+                    <th className="px-2 sm:px-4 py-2 font-medium hidden md:table-cell">Tür / Kargo</th>
+                    <th className="px-2 sm:px-4 py-2 font-medium">Durum</th>
+                    <th className="px-2 sm:px-4 py-2 font-medium text-right">Tutar</th>
+                    <th className="px-2 sm:px-4 py-2 font-medium w-[130px]">Harita</th>
+                  </tr>
+                </thead>
               <tbody>
                 {packages.map((p) => {
                   const isSelected = p.id === selectedPkgId;
@@ -765,7 +770,8 @@ function PackagesModal(props: {
                   );
                 })}
               </tbody>
-            </table>
+              </table>
+            </div>
           )}
         </div>
 
