@@ -1,10 +1,27 @@
 export type ApplicationType = "dealer_form" | "corporate_form" | "carrier_application";
 export type ReviewStatus = "pending" | "approved" | "rejected";
 
-export function fmtDateTR(iso?: string | null) {
+export function fmtDateTR(iso?: string | null): string {
   if (!iso) return "-";
   try {
-    return new Date(iso).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
+    // Eğer timezone bilgisi yoksa (Z veya +/- yoksa), UTC olarak kabul et
+    let dateStr = iso.trim();
+    const hasTimezone = dateStr.endsWith("Z") || dateStr.match(/[+-]\d{2}:?\d{2}$/);
+    if (!hasTimezone) {
+      // Timezone bilgisi yok, UTC olarak parse et
+      dateStr = dateStr + "Z";
+    }
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return iso;
+    // Türkiye saati için timezone'u açıkça belirt
+    return d.toLocaleString("tr-TR", {
+      timeZone: "Europe/Istanbul",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   } catch {
     return iso;
   }
