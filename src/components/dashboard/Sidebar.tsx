@@ -14,7 +14,13 @@ const ROLE_TITLES: Record<string, string> = {
   support: "Çağrı Merkezi",
 };
 
-export default function Sidebar({ nav = [] as NavGroup[] }: { nav?: NavGroup[] }) {
+export default function Sidebar({
+  nav = [] as NavGroup[],
+  onClose,
+}: {
+  nav?: NavGroup[];
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
 
   const [open, setOpen] = useState<Record<string, boolean>>(
@@ -22,7 +28,7 @@ export default function Sidebar({ nav = [] as NavGroup[] }: { nav?: NavGroup[] }
   );
 
   return (
-    <aside className="sticky top-0 h-dvh w-72 shrink-0 bg-white border-r border-neutral-200 flex flex-col overflow-hidden">
+    <aside className="h-dvh w-72 shrink-0 bg-white border-r border-neutral-200 flex flex-col overflow-hidden">
        {/* Header */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center gap-2 h-8 overflow-visible">
@@ -60,6 +66,12 @@ export default function Sidebar({ nav = [] as NavGroup[] }: { nav?: NavGroup[] }
                     <li key={it.href}>
                       <Link
                         href={href}
+                        onClick={() => {
+                          // Link tıklandığında sidebar'ı kapat (mobil ve masaüstü)
+                          if (onClose) {
+                            onClose();
+                          }
+                        }}
                         className={[
                           "flex items-center justify-between rounded-xl px-4 py-3 transition",
                           active ? "bg-orange-500 text-white shadow-sm" : "text-orange-600 hover:bg-orange-50",

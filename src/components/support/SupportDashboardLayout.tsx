@@ -14,6 +14,24 @@ export default function SupportDashboardLayout({
   children: React.ReactNode;
 }) {
   const { access, error } = useSupportAccess();
+  const [sidebarOpen, setSidebarOpen] = React.useState(true); // Başlangıçta açık
+
+  // Ekran boyutu değiştiğinde sidebar durumunu ayarla
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      if (window.innerWidth >= 768) {
+        // Masaüstünde sidebar açık kalabilir (kullanıcı kapatmadıysa)
+        // State'i sıfırlamıyoruz, sadece kontrol ediyoruz
+      } else {
+        // Mobilde sidebar kapalı olsun
+        setSidebarOpen(false);
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   const nav: NavGroup[] = React.useMemo(() => {
     const base = navForRole("support") || [];
@@ -56,13 +74,35 @@ export default function SupportDashboardLayout({
   // if (access.length === 0) { ... }
 
   return (
-    <div className="min-h-dvh bg-neutral-100 flex">
-      <Sidebar nav={nav} />
-      <div className="flex-1 orange-ui">
+    <div className="min-h-dvh bg-neutral-100 flex relative">
+      {/* Overlay - sadece mobilde sidebar açıkken */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - mobilde fixed overlay, masaüstünde static */}
+      <aside
+        className={`
+          fixed md:static inset-y-0 left-0 z-50 md:z-auto
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:transform-none md:transition-none
+          ${sidebarOpen ? "" : "md:hidden"}
+        `}
+      >
+        <Sidebar nav={nav} onClose={() => setSidebarOpen(false)} />
+      </aside>
+
+      {/* Main content area */}
+      <div className="flex-1 orange-ui w-full min-w-0">
         <Header
           title="Yüksi Panel"
           headerClass="bg-orange-500 border-orange-400 text-white"
           titleClass="font-extrabold"
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
         />
         <main className="px-4 py-6">
           <div className="max-w-7xl mx-auto">

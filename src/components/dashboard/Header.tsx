@@ -32,11 +32,13 @@ export default function Header({
   titleClass = "",
   headerClass = "",
   userLabel = "Hesabım",
+  onMenuClick,
 }: {
   title: string;
   titleClass?: string;
   headerClass?: string;
   userLabel?: string;
+  onMenuClick?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -234,9 +236,34 @@ export default function Header({
       ].join(" ")}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <h1 className={["text-lg font-semibold", titleClass].join(" ")}>
-          {title}
-        </h1>
+        <div className="flex items-center gap-3">
+          {/* Hamburger Menu Button - her yerde görünür */}
+          <button
+            type="button"
+            onClick={onMenuClick}
+            className="flex items-center justify-center h-10 w-10 rounded-lg hover:bg-white/10"
+            aria-label="Menüyü aç/kapat"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="opacity-90"
+            >
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <h1 className={["text-lg font-semibold", titleClass].join(" ")}>
+            {title}
+          </h1>
+        </div>
 
         <div className="flex items-center gap-2">
           {/* Notifications */}
